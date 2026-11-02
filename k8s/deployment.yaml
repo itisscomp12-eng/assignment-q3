@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-java-app
+  labels:
+    app: my-java-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-java-app
+  template:
+    metadata:
+      labels:
+        app: my-java-app
+    spec:
+      containers:
+        - name: my-java-app
+          image: IMAGE_PLACEHOLDER
+          imagePullPolicy: Always
+          # Hello World exits immediately, which makes the pod CrashLoopBackOff.
+          # This keeps the pod Running after printing the output.
+          command: ["sh", "-c", "java Hello && sleep 3600"]
+          ports:
+            - containerPort: 8080
