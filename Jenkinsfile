@@ -64,22 +64,18 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 echo "Deploying ${FULL_IMAGE} to Kubernetes"
-                withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG')]) {
-                    sh "sed -i 's|IMAGE_PLACEHOLDER|${FULL_IMAGE}|' k8s/deployment.yaml"
-                    sh 'kubectl apply -f k8s/deployment.yaml'
-                    sh 'kubectl apply -f k8s/service.yaml'
-                }
+                sh "sed -i 's|IMAGE_PLACEHOLDER|${FULL_IMAGE}|' k8s/deployment.yaml"
+                sh 'kubectl apply -f k8s/deployment.yaml'
+                sh 'kubectl apply -f k8s/service.yaml'
             }
         }
 
         stage('Verify Pod') {
             steps {
-                withCredentials([file(credentialsId: 'kubeconfig-file', variable: 'KUBECONFIG')]) {
-                    sh 'kubectl rollout status deployment/my-java-app --timeout=120s'
-                    sh 'kubectl get pods -l app=my-java-app'
-                    sh 'kubectl get svc my-java-app-service'
-                    sh 'kubectl logs -l app=my-java-app'
-                }
+                sh 'kubectl rollout status deployment/my-java-app --timeout=120s'
+                sh 'kubectl get pods -l app=my-java-app'
+                sh 'kubectl get svc my-java-app-service'
+                sh 'kubectl logs -l app=my-java-app'
             }
         }
     }
